@@ -20,12 +20,14 @@ class VideoPlayer{
         this.videoElement = document.querySelector('#video');
         this.videoTitleElement = document.querySelector('#videoTitle');
         this.subVideosElement = document.querySelector('.content-sub-videos');
+        this.searchElement = document.querySelector('.header-center [name="search"]');
 
         this.main();
 
     }
     main(){
         this.data();
+        this.searchFilter();
     }
     data(){
         fetch(`${Constants.URL}/getFiles.php`)
@@ -40,6 +42,7 @@ class VideoPlayer{
 
                     let subVideoSection = document.createElement('div');
                     subVideoSection.className = 'sub-video-section';
+                    subVideoSection.setAttribute(`title`, file);
 
                     let subVideoTitle = document.createElement('span');
                     subVideoTitle.className = 'sub-video-title';
@@ -71,5 +74,36 @@ class VideoPlayer{
 
         this.videoElement.src = `${Constants.URL}/${Constants.lessonsFolder}/${currentVideoIndex}`;
         this.videoTitleElement.textContent = currentVideoIndex;
+    }
+    searchFilter(){
+
+        if ( this.searchElement ) {
+            this.searchElement.addEventListener('keydown', () => {
+
+                let searchValue = this.searchElement.value.toUpperCase();
+
+                if ( searchValue.length >= 0 ) {
+
+                    let subVideoSectionList = document.querySelectorAll('.sub-video-section');
+
+                    subVideoSectionList.forEach(subVideoSection => {
+
+                        let titleOfSubVideoSection = subVideoSection.getAttribute('title').toUpperCase();
+
+                        if ( titleOfSubVideoSection.indexOf(searchValue) > -1 ) {
+                            subVideoSection.style.display = "";
+                        } else {
+                            subVideoSection.style.display = "none"; 
+                        }
+
+                    });
+
+                } else {
+
+                }
+
+            });
+        }
+
     }
 }
