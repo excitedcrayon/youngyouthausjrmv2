@@ -94,6 +94,17 @@ body.active-body-overlay {
         color: var(--color-light-grey);
         font-size: calc(var(--regular-font-size) * 0.9);
     }
+
+    button {
+        cursor: pointer;
+        padding: 10px 15px;
+        font-size: var(--regular-font-size);
+        background: transparent;
+        outline: none;
+        border: 2px solid var(--color-gold);
+        border-radius: 0.25rem;
+        color: var(--color-gold);
+    }
 }
 header{
     position: sticky;
@@ -219,6 +230,10 @@ header {
     }
     .content-video{
         background: var(--color-light-grey);
+
+        video{
+            background: var(--color-black);
+        }
 
         #videoTitle{
             width: 100%;

@@ -24,6 +24,7 @@ class VideoPlayer{
         this.searchElement = document.querySelector('.header-center [name="search"]');
         this.headerBurgerMenuElement = document.querySelector('.header-burger-menu');
         this.overlay = document.querySelector('.overlay');
+        this.overlayCloseButton = document.querySelector('.overlay-content button');
         this.videoList = [];
 
         this.main();
@@ -164,6 +165,12 @@ class VideoPlayer{
     }
     menu(){
         this.headerBurgerMenuElement.addEventListener('click', () => {
+            this.headerBurgerMenuElement.classList.toggle('active-menu');
+            this.overlay.classList.toggle('active-overlay');
+            document.body.classList.toggle('active-body-overlay');
+        });
+
+        this.overlayCloseButton.addEventListener('click', () => {
             this.headerBurgerMenuElement.classList.toggle('active-menu');
             this.overlay.classList.toggle('active-overlay');
             document.body.classList.toggle('active-body-overlay');
