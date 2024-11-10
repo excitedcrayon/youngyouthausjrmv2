@@ -57,7 +57,44 @@ input{
     display: inline-block;
     outline: none;
 }
-a{ text-decoration: none; }
+a{ 
+    color: inherit;
+    text-decoration: none; 
+}
+body.active-body-overlay {
+    height: 100vh;
+    overflow: hidden;
+}
+.overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 58px);
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    display: none;
+    place-items: center;
+}
+.overlay.active-overlay{
+    display: grid;
+}
+.overlay-content {
+    color: var(--color-gold);
+    display: -ms-flex;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    font-weight: 100;
+    font-size: var(--regular-font-size);
+
+    span{
+        color: var(--color-light-grey);
+        font-size: calc(var(--regular-font-size) * 0.9);
+    }
+}
 header{
     position: sticky;
     top: 0;
@@ -139,7 +176,27 @@ header {
                 margin: 0.15rem 0;
                 background-color: var(--color-black);
                 border-radius: 0.5rem;
+                transform: rotate(0deg);
+                opacity: 1;
+                transition: var(--transition-medium) linear;
             }
+        }
+    }
+
+    .header-burger-menu:hover{
+        outline: none;
+        cursor: pointer;
+        z-index: 15000;
+    }
+    .header-burger-menu.active-menu {
+        > div:nth-child(1){
+            transform: rotate(-45deg) translate(-6px, 5px);
+        }
+        > div:nth-child(2){
+            opacity: 0;
+        }
+        > div:nth-child(3){
+            transform: rotate(45deg) translate(-6px, -6px);
         }
     }
 }
@@ -200,6 +257,9 @@ header {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        height: 60px;
+        display: grid;
+        align-items: center;
     }
 }
 
@@ -220,6 +280,10 @@ header {
             overflow-y: scroll;
         }
     }
+
+    .overlay.active-overlay{
+        height: calc(100vh - 108px);
+    }
 }
 
 @media (max-width: 1023px) {
@@ -229,6 +293,10 @@ header {
             overflow: hidden;
             overflow-y: scroll;
         }
+    }
+
+    .overlay.active-overlay{
+        height: calc(100vh - 108px);
     }
 }
 
@@ -258,6 +326,9 @@ header {
 
 @media (min-width: 1300px){
     .sub-video-section:hover{
+
+        cursor: pointer;
+
         background: var(--color-grey);
         border-bottom: 1px solid var(--color-gold);
     

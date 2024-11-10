@@ -7,7 +7,6 @@ const Constants = {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    console.log(Constants);
     try{
         new VideoPlayer();
     }catch(e){
@@ -15,12 +14,17 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+let currentAutoPlayIndex = 0;
+
 class VideoPlayer{
     constructor(){
         this.videoElement = document.querySelector('#video');
         this.videoTitleElement = document.querySelector('#videoTitle');
         this.subVideosElement = document.querySelector('.content-sub-videos');
         this.searchElement = document.querySelector('.header-center [name="search"]');
+        this.headerBurgerMenuElement = document.querySelector('.header-burger-menu');
+        this.overlay = document.querySelector('.overlay');
+        this.videoList = [];
 
         this.main();
 
@@ -28,6 +32,9 @@ class VideoPlayer{
     main(){
         this.data();
         this.searchFilter();
+        this.playSelectedVideo();
+        this.autoPlayNextVideo();
+        this.menu();
     }
     data(){
         fetch(`${Constants.URL}/getFiles.php`)
@@ -60,6 +67,8 @@ class VideoPlayer{
                     subVideoSection.appendChild(subVideo);
                     subVideoSection.appendChild(subVideoTitle);
                     this.subVideosElement.appendChild(subVideoSection);
+
+                    this.videoList.push(file);
                 });
 
                 // render latest video on page load
@@ -75,6 +84,28 @@ class VideoPlayer{
         this.videoElement.src = `${Constants.URL}/${Constants.lessonsFolder}/${currentVideoIndex}`;
         this.videoTitleElement.textContent = currentVideoIndex;
     }
+    playSelectedVideo(){
+        window.addEventListener('click', (e) => {
+            //console.log(e.target.className);
+
+            if ( e.target.className.indexOf('sub-video-title') > -1 || e.target.className.indexOf('sub-video') > -1 ) {
+                let subVideoSection = e.target.parentElement;
+                let subVideoSectionTitle = subVideoSection.getAttribute('title');
+                let indexOfSelected = this.videoList.indexOf(subVideoSectionTitle);
+                // set autoplay index to index of selected
+                currentAutoPlayIndex = indexOfSelected;
+
+
+                // reset video player
+                this.videoElement.src = '';
+                this.videoTitleElement.textContent = '';
+                // load new data to video player
+                this.videoElement.src = `${Constants.URL}/${Constants.lessonsFolder}/${subVideoSectionTitle.toString()}`;
+                this.videoTitleElement.textContent = subVideoSectionTitle;
+
+            }
+        });
+    }
     searchFilter(){
 
         if ( this.searchElement ) {
@@ -82,7 +113,7 @@ class VideoPlayer{
 
                 let searchValue = this.searchElement.value.toUpperCase();
 
-                if ( searchValue.length >= 0 ) {
+                if ( searchValue.length > 1 ) {
 
                     let subVideoSectionList = document.querySelectorAll('.sub-video-section');
 
@@ -92,6 +123,7 @@ class VideoPlayer{
 
                         if ( titleOfSubVideoSection.indexOf(searchValue) > -1 ) {
                             subVideoSection.style.display = "";
+
                         } else {
                             subVideoSection.style.display = "none"; 
                         }
@@ -100,10 +132,41 @@ class VideoPlayer{
 
                 } else {
 
+                    let subVideoSectionList = document.querySelectorAll('.sub-video-section');
+
+                    subVideoSectionList.forEach(subVideoSection => {
+                        subVideoSection.style.display = "";
+                    });
+
                 }
 
             });
         }
 
+    }
+    autoPlayNextVideo(){
+        this.videoElement.addEventListener('ended', e => {
+            currentAutoPlayIndex = currentAutoPlayIndex + 1;
+
+            if ( currentAutoPlayIndex > this.videoList.length - 1 ) {
+                currentAutoPlayIndex = 0;
+            }
+
+            this.videoElement.src = '';
+            this.videoTitleElement.textContent = '';
+
+            this.videoElement.src = `${Constants.URL}/${Constants.lessonsFolder}/${this.videoList[currentAutoPlayIndex]}`;
+            this.videoTitleElement.textContent = this.videoList[currentAutoPlayIndex];
+
+            this.videoElement.play();
+            
+        });
+    }
+    menu(){
+        this.headerBurgerMenuElement.addEventListener('click', () => {
+            this.headerBurgerMenuElement.classList.toggle('active-menu');
+            this.overlay.classList.toggle('active-overlay');
+            document.body.classList.toggle('active-body-overlay');
+        });
     }
 }
